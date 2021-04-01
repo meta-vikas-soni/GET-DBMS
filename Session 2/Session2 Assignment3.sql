@@ -13,35 +13,35 @@ VALUES (2,1,"Delivered",
 (SELECT prod_price
 FROM products
 WHERE products.prod_id=2
-)*1,1);
+)*1,2);
 
 INSERT INTO cart(prod_id,item_quantity,item_status,total_price,user_id)
 VALUES (3,1,"Delivered",
 (SELECT prod_price
 FROM products
 WHERE products.prod_id=3
-)*1,1);
+)*1,2);
 
 INSERT INTO cart(prod_id,item_quantity,total_price,user_id)
 VALUES (4,1,
 (SELECT prod_price
 FROM products
 WHERE products.prod_id=4
-)*1,1);
+)*1,2);
 
 INSERT INTO cart(prod_id,item_quantity,item_status,total_price,user_id)
 VALUES (5,1,"Shipped",
 (SELECT prod_price
 FROM products
 WHERE products.prod_id=5
-)*1,1);
+)*1,2);
 
 INSERT INTO cart(prod_id,item_quantity,item_status,total_price,user_id)
 VALUES (6,1,"Shipped",
 (SELECT prod_price
 FROM products
 WHERE products.prod_id=6
-)*1,1);
+)*1,2);
 
 
 INSERT INTO cart(prod_id,item_quantity,item_status,total_price,user_id)
@@ -52,11 +52,11 @@ WHERE products.prod_id=6
 )*1,1);
 
 INSERT INTO cart(prod_id,item_quantity,item_status,total_price,user_id)
-VALUES (5,1,"Shipped",
+VALUES (5,1,"Delivered",
 (SELECT prod_price
 FROM products
 WHERE products.prod_id=5
-)*1,1);
+)*1,4);
 
 INSERT INTO cart(prod_id,item_quantity,item_status,total_price,user_id)
 VALUES (6,1,"Delivered",
@@ -65,12 +65,15 @@ FROM products
 WHERE products.prod_id=6
 )*1,2);
 
-
 select * from orders;
 /*Adding to orders*/
 INSERT INTO Orders(cart_id,user_id)
 SELECT cart_id, user_id FROM Cart
-WHERE Cart.item_status!="Order Not Placed";
+WHERE Cart.item_status!="Order Not Placed"
+AND Cart.cart_timestamp>(
+    SELECT DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 10 MINUTE)
+);
+
 
 /*Changing payment method*/
 SET SQL_SAFE_UPDATES=0;
@@ -127,13 +130,16 @@ WHERE order_timestamp>(SELECT DATE_SUB(CURRENT_TIMESTAMP, INTERVAL  1 DAY))
 ORDER BY user_id ASC;
 
 /*Display list of order items which are in “shipped” state for particular Order Id (i.e.: 1020))*/
-SELECT c.cart_id as Items,c.item_status,COUNT(o.user_id)
-FROM Orders AS o
-INNER JOIN Cart as c
-ON o.user_id=c.user_id
-WHERE c.user_id=1 and item_status="Order Not Placed";
+SELECT o.order_id AS ORDER_ID, c.item_status AS Item_Status
+FROM orders as o
+INNER JOIN cart as c
+ON o.cart_id=c.cart_id
+WHERE o.user_id = 2 and c.item_status="Shipped";
 
-
-
-select Count(order_id) from Orders
-
+/*Display list of order items along with order placed date which fall between Rs 20 to Rs 50 price.*/
+SELECT o.order_id AS ORDER_ID, c.item_status AS Item_Status
+FROM orders as o
+INNER JOIN cart as c
+ON o.cart_id=c.cart_id
+WHERE c.total_price BETWEEN 20 and 50
+AND c.item_status!='Order Not Placed';

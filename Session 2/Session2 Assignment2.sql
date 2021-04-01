@@ -58,6 +58,15 @@ INSERT INTO prod_image(prod_id,prod_image_path)
 VALUES (1,"some image");
 
 INSERT INTO Products(prod_name,prod_price,stock_quantity,stock_status,prod_brand,prod_description,sub_cat_id)
+VALUES("Patanjali Soap",45,100,1,"Patanjali","Weight: 100gm",
+(SELECT sub_cat_id
+FROM Sub_Category
+WHERE Sub_Category.sub_cat_name="Grocery"
+));
+INSERT INTO prod_image(prod_id,prod_image_path)
+VALUES (7,"some image");
+
+INSERT INTO Products(prod_name,prod_price,stock_quantity,stock_status,prod_brand,prod_description,sub_cat_id)
 VALUES("Butter",50,100,1,"Amul","Weight: 200gm",
 (SELECT sub_cat_id
 FROM Sub_Category
@@ -132,6 +141,9 @@ VALUES("luckysoni","luckysoni@gmail.com","Lucky","Soni","lucky1234");
 
 INSERT INTO User(username,email_id,first_name,last_name,password)
 VALUES("sourabhsoni","sourabhsoni525@gmail.com","Sourabh","Soni","sourabh1234");
+
+INSERT INTO User(username,email_id,first_name,last_name,password)
+VALUES("ajinkyapande","xyz@gmail.com","Ajinkya","Pande","xyz1234");
 /*Adding User Address*/
 INSERT INTO User_Address(user_id,address)
 VALUES(1,"11-B Shantiniketan Colony");
@@ -205,3 +217,7 @@ SELECT *
 FROM 
 Products as p
 WHERE p.stock_quantity<101
+
+
+
+/*SET SQL_SAFE_UPDATES=0;*/
