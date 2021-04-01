@@ -25,6 +25,7 @@ CREATE TABLE Products(
     prod_brand varchar(255) NOT NULL,
     prod_description LONGTEXT,
     sub_cat_id INT NOT NULL,
+    prod_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(prod_id)
 );
 
@@ -37,47 +38,48 @@ CREATE TABLE Prod_Image(
 CREATE TABLE Sub_Category(
     sub_cat_id INT NOT NULL AUTO_INCREMENT,
     category_id INT NOT NULL,
-    sub_cat_name varchar(255) NOT NULL,
+    sub_cat_name varchar(255) NOT NULL UNIQUE,
     PRIMARY KEY(sub_cat_id)
 );
+/*Adding new column for parent sub category*/
+ALTER TABLE Sub_Category
+ADD Parent_Sub_Category INT DEFAULT null;
+/*Adding foreign key constraint*/
+ALTER TABLE Sub_Category
+ADD CONSTRAINT fk_Parent_Sub_Category FOREIGN KEY (Parent_Sub_Category)
+REFERENCES Sub_Category(sub_cat_id);
+
 
 CREATE TABLE Category(
     category_id INT NOT NULL AUTO_INCREMENT,
-    category_name varchar(255) NOT NULL,
+    category_name varchar(255) NOT NULL UNIQUE,
     PRIMARY KEY(category_id)
-);
-
-CREATE TABLE Cart_Item(
-    cart_item_id INT NOT NULL AUTO_INCREMENT,
-    prod_id INT NOT NULL,
-    item_quantity INT DEFAULT 1,
-    item_status varchar(255) NOT NULL,
-    total_price INT NOT NULL,
-    PRIMARY KEY(cart_item_id)
 );
 
 CREATE TABLE Cart(
     cart_id INT NOT NULL AUTO_INCREMENT,
-    cart_item_id INT NOT NULL,
+    prod_id INT NOT NULL,
+    item_quantity INT DEFAULT 1,
+    item_status varchar(255) NOT NULL DEFAULT "Order Not Placed",
     user_id INT NOT NULL,
-    cart_total_price INT,
-    PRIMARY KEY(cart_id),
-    FOREIGN KEY (user_id) REFERENCES User(user_id)
+    total_price INT NOT NULL,
+    cart_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(cart_id)
 );
 
 CREATE TABLE Orders(
     order_id INT NOT NULL AUTO_INCREMENT,
     cart_id INT NOT NULL,
-    user_id INT NOT NULL,
-    total_payment INT NOT NULL,
-    order_status varchar(255) NOT NULL,
-    payment_mode varchar(255) NOT NULL,
-    PRIMARY KEY(order_id),
-    FOREIGN KEY (user_id) REFERENCES User(user_id)
+    payment_mode varchar(255) NOT NULL DEFAULT "COD",
+    order_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(order_id)
 );
+ALTER TABLE Orders
+ADD user_id INT NOT NULL;
 
 ALTER TABLE Prod_Image
 DROP FOREIGN KEY FK_prod_id;
+
 DROP TABLE Products;
 
 CREATE TABLE Products(
