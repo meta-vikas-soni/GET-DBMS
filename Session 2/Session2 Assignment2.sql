@@ -47,6 +47,7 @@ UPDATE Sub_Category
 SET Parent_Sub_Category=1
 WHERE sub_cat_name="Apple";
 
+select * from sub_category;
 /*Adding Products*/
 INSERT INTO Products(prod_name,prod_price,stock_quantity,stock_status,prod_brand,prod_description,sub_cat_id)
 VALUES("Bread",40,100,1,"Amul","Weight: 100gm",
